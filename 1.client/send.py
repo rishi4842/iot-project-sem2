@@ -2,7 +2,7 @@ import requests
 import numpy as np
 from tensorflow.keras.models import load_model
 
-encoder = load_model("../model/encoder.h5", compile=False)
+encoder = load_model("model/encoder.h5", compile=False)
 
 sample = np.array([[30, 60, 200]])
 

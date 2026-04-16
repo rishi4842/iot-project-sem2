@@ -5,7 +5,7 @@ from tensorflow.keras.models import load_model
 app = Flask(__name__)
 
 # Load decoder model
-decoder = load_model("../model/decoder.h5", compile=False)
+decoder = load_model("model/decoder.h5", compile=False)
 
 # API route
 @app.route('/data', methods=['POST'])
