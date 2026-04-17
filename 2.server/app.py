@@ -1,30 +1,53 @@
-from flask import Flask, request
+import os
+from flask import Flask, render_template, request
 import numpy as np
 from tensorflow.keras.models import load_model
 
 app = Flask(__name__)
 
-# Load decoder model
-decoder = load_model("model/decoder.h5", compile=False)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+encoder = load_model(os.path.join(BASE_DIR, '..', '3.model', 'encoder.h5'), compile=False)
+decoder = load_model(os.path.join(BASE_DIR, '..', '3.model', 'decoder.h5'), compile=False)
 
-# API route
-@app.route('/data', methods=['POST'])
-def receive():
-    data = np.array(request.json["data"])
-    result = decoder.predict(data)
+@app.route('/', methods=['GET', 'POST'])
+def home():
+    original = []
+    compressed = None
+    reconstructed = None
+    error = None
+    message = None
 
-    print("Reconstructed:", result)
+    if request.method == 'POST':
+        data = request.form.get('data', '')
 
-    # Original data (for error calculation)
-    original = np.array([[30, 60, 200]])
+        try:
+            original = [float(x) for x in data.split(',') if x.strip() != '']
+            if len(original) == 0:
+                raise ValueError('No numeric values provided.')
 
-    # Mean Squared Error
-    mse = np.mean((original - result)**2)
+            values = np.array(original).reshape(1, -1)
+            values = values / 100.0
 
-    print("Error:", mse)
+            compressed = encoder.predict(values)
+            reconstructed = decoder.predict(compressed)
+            reconstructed = reconstructed * 100.0
 
-    return {"status": "ok"}
+            error = float(np.mean((np.array(original).reshape(1, -1) - reconstructed) ** 2))
 
+            compressed = compressed.flatten().tolist()
+            reconstructed = reconstructed.flatten().tolist()
 
-# Run server (OUTSIDE function)
-app.run(debug=True)
+        except Exception as e:
+            print('ERROR:', e)
+            message = 'Invalid input. Please enter comma-separated numbers like 30,45,60.'
+
+    return render_template(
+        'index.html',
+        original=original,
+        compressed=compressed,
+        reconstructed=reconstructed,
+        error=error,
+        message=message
+    )
+if __name__ == "__main__":
+    app.run(debug=True, host='0.0.0.0', port=5050)
