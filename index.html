@@ -18,6 +18,8 @@
         <button onclick="compressData()">Compress</button>
     </div>
 
+    <p id="emptyMsg">Enter data and click compress to see results</p>
+
     <div class="dashboard">
 
         <div class="stats">
@@ -31,10 +33,20 @@
                 <p id="compressedAvg">--</p>
             </div>
 
-        <div class="card">
-            <h3>Compression %</h3>
-            <p id="compressionRate">--</p>
+            <div class="card">
+                <h3>Compression %</h3>
+                <p id="compressionRate">--</p>
+            </div>
         </div>
+
+        <div class="chart-card">
+            <h2 class="section-title">📊 Results</h2>
+            <canvas id="chart"></canvas>
+        </div>
+
+    </div>
+
+</div>
 
 <script>
 
@@ -67,6 +79,7 @@ function compressData() {
     document.getElementById("originalAvg").innerText = avgOriginal.toFixed(2);
     document.getElementById("compressedAvg").innerText = avgCompressed.toFixed(2);
     document.getElementById("compressionRate").innerText = compressionRate.toFixed(1) + "%";
+    document.getElementById("emptyMsg").style.display = "none";
 
     if(chart) chart.destroy();
 
@@ -89,7 +102,22 @@ function compressData() {
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: "white"
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: { color: "white" }
+                },
+                y: {
+                    ticks: { color: "white" }
+                }
+            }
         }
     });
 
