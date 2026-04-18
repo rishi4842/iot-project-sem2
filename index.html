@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Smart IoT Compression</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>🚀 Smart IoT Compression Dashboard</h1>
+
+<input id="input" placeholder="Enter data (e.g. 10,20,30)">
+<button onclick="compressData()">Compress</button>
+
+<p id="result"></p>
+
+<script>
+function compressData() {
+    let input = document.getElementById("input").value;
+    let values = input.split(",").map(Number);
+    let compressed = values.map(v => (v * 0.5).toFixed(2));
+    document.getElementById("result").innerText =
+        "Compressed Data: " + compressed.join(", ");
+}
+</script>
+
+</body>
+</html>

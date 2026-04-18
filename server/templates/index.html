@@ -1,99 +1,38 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>IoT Compression System</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT Compression Demo</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
+    <div class="container">
+        <h1>IoT Compression Demo</h1>
+        <p>Enter comma-separated values and click Compress.</p>
 
-<div class="container">
-    <h1>🚀 Smart IoT Compression Dashboard</h1>
-    <p>AI-powered IoT data compression & reconstruction using Deep Learning</p>
+        <input id="input" type="text" placeholder="Enter sensor data (e.g. 30,45,60)">
+        <button onclick="compressData()">Compress</button>
 
-    <form method="POST">
-        <input name="data" value="{{ request.form.get('data', '') }}" placeholder="Enter sensor data (e.g. 30,45,60)">
-        <button type="submit">Compress</button>
-    </form>
+        <p id="result"></p>
+    </div>
 
-    {% if message %}
-        <div class="card error-card">
-            <h3>Error</h3>
-            <p>{{ message }}</p>
-        </div>
-    {% endif %}
+    <script>
+        function compressData() {
+            const input = document.getElementById("input").value;
 
-    {% if compressed is not none %}
-        <div class="card">
-            <h3>📦 Compressed Data</h3>
-            <p>{{ compressed }}</p>
-        </div>
+            if (!input) {
+                alert("Enter some data");
+                return;
+            }
 
-        <div class="card">
-            <h3>🔁 Reconstructed Data</h3>
-            <p>{{ reconstructed }}</p>
-        </div>
+            // Fake compression logic (for demo)
+            const values = input.split(",").map(Number);
+            const compressed = values.map(v => (v * 0.5).toFixed(2));
 
-        <div class="card">
-            <h3>📉 Mean Squared Error</h3>
-            <p style="color: {{ 'red' if error > 1000 else 'lightgreen' }}">
-                {{ error }}
-            </p>
-        </div>
-
-        <h3 style="margin-top:30px;">📊 Data Comparison</h3>
-        <p style="opacity:0.7; margin-top:10px;">
-            Compare original vs reconstructed data visually
-        </p>
-
-        <canvas id="chart" style="margin-top:30px;"></canvas>
-
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script>
-            const original = {{ original | tojson | safe }};
-            const reconstructedData = {{ reconstructed | tojson | safe }};
-            new Chart(document.getElementById("chart"), {
-                type: 'line',
-                data: {
-                    labels: original.map((_, i) => "Point " + (i + 1)),
-                    datasets: [
-                        {
-                            label: "Original",
-                            data: original,
-                            borderWidth: 3,
-                            borderColor: "#38bdf8",
-                            tension: 0.4
-                        },
-                        {
-                            label: "Reconstructed",
-                            data: reconstructedData,
-                            borderWidth: 3,
-                            borderColor: "#fb7185",
-                            tension: 0.4
-                        }
-                    ]
-                },
-                options: {
-                    plugins: {
-                        legend: {
-                            labels: {
-                                color: "white"
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            ticks: { color: "white" }
-                        },
-                        y: {
-                            ticks: { color: "white" }
-                        }
-                    }
-                }
-            });
-        </script>
-    {% endif %}
-
-</div>
-
+            document.getElementById("result").innerText =
+                "Compressed Data: " + compressed.join(", ");
+        }
+    </script>
 </body>
 </html>
