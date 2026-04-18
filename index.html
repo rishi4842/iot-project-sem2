@@ -30,16 +30,11 @@
                 <h3>Compressed Avg</h3>
                 <p id="compressedAvg">--</p>
             </div>
+
+        <div class="card">
+            <h3>Compression %</h3>
+            <p id="compressionRate">--</p>
         </div>
-
-        <div class="chart-card">
-            <h3>📊 Compression Visualization</h3>
-            <canvas id="chart"></canvas>
-        </div>
-
-    </div>
-
-</div>
 
 <script>
 
@@ -47,16 +42,31 @@ let chart;
 
 function compressData() {
 
-    let input = document.getElementById("inputData").value;
-    let values = input.split(',').map(Number);
+    let input = document.getElementById("inputData").value.trim();
+
+    if (!input) {
+        alert("Enter valid data");
+        return;
+    }
+
+    let values = input.split(',')
+        .map(v => Number(v.trim()))
+        .filter(v => !isNaN(v));
+
+    if (values.length === 0) {
+        alert("Enter valid numeric data");
+        return;
+    }
 
     let compressed = values.map(v => v * 0.5);
 
     let avgOriginal = values.reduce((a,b)=>a+b,0)/values.length;
     let avgCompressed = compressed.reduce((a,b)=>a+b,0)/compressed.length;
+    let compressionRate = ((1 - (compressed.reduce((a,b)=>a+b,0) / values.reduce((a,b)=>a+b,0))) * 100);
 
     document.getElementById("originalAvg").innerText = avgOriginal.toFixed(2);
     document.getElementById("compressedAvg").innerText = avgCompressed.toFixed(2);
+    document.getElementById("compressionRate").innerText = compressionRate.toFixed(1) + "%";
 
     if(chart) chart.destroy();
 
