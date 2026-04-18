@@ -41,7 +41,9 @@
 
         <div class="chart-card">
             <h2 class="section-title">📊 Results</h2>
-            <canvas id="chart"></canvas>
+            <div id="chartContainer" style="display:none;">
+                <canvas id="myChart"></canvas>
+            </div>
         </div>
 
     </div>
@@ -50,27 +52,32 @@
 
 <script>
 
-let chart;
-
 function compressData() {
+    let input = document.getElementById("inputData").value;
 
-    let input = document.getElementById("inputData").value.trim();
-
-    if (!input) {
-        alert("Enter valid data");
+    if (!input.trim()) {
+        document.getElementById("emptyMsg").innerText = "⚠️ Enter valid numbers!";
+        document.getElementById("chartContainer").style.display = "none";
         return;
     }
 
-    let values = input.split(',')
-        .map(v => Number(v.trim()))
-        .filter(v => !isNaN(v));
+    let values = input.split(",").map(v => parseFloat(v.trim()));
 
-    if (values.length === 0) {
-        alert("Enter valid numeric data");
+    // check invalid numbers
+    if (values.some(isNaN)) {
+        document.getElementById("emptyMsg").innerText = "⚠️ Invalid numbers!";
+        document.getElementById("chartContainer").style.display = "none";
         return;
     }
 
-    let compressed = values.map(v => v * 0.5);
+    let compressed = values.map(v => v / 2);
+
+    updateUI(values, compressed);
+}
+
+function updateUI(values, compressed) {
+    document.getElementById("chartContainer").style.display = "block";
+    document.getElementById("emptyMsg").style.display = "none";
 
     let avgOriginal = values.reduce((a,b)=>a+b,0)/values.length;
     let avgCompressed = compressed.reduce((a,b)=>a+b,0)/compressed.length;
@@ -79,24 +86,31 @@ function compressData() {
     document.getElementById("originalAvg").innerText = avgOriginal.toFixed(2);
     document.getElementById("compressedAvg").innerText = avgCompressed.toFixed(2);
     document.getElementById("compressionRate").innerText = compressionRate.toFixed(1) + "%";
-    document.getElementById("emptyMsg").style.display = "none";
 
-    if(chart) chart.destroy();
+    let labels = values.map((_, i) => i + 1);
 
-    chart = new Chart(document.getElementById("chart"), {
-        type: 'line',
+    if (window.myChart) {
+        window.myChart.destroy();
+    }
+
+    const ctx = document.getElementById("myChart").getContext("2d");
+
+    window.myChart = new Chart(ctx, {
+        type: "line",
         data: {
-            labels: values.map((_, i) => i+1),
+            labels: labels,
             datasets: [
                 {
                     label: "Original",
                     data: values,
-                    borderColor: "#22c55e"
+                    borderColor: "#22c55e",
+                    tension: 0.4
                 },
                 {
                     label: "Compressed",
                     data: compressed,
-                    borderColor: "#ef4444"
+                    borderColor: "#ef4444",
+                    tension: 0.4
                 }
             ]
         },
@@ -120,8 +134,12 @@ function compressData() {
             }
         }
     });
-
 }
+
+// Initialize on page load
+window.addEventListener('load', function() {
+    document.getElementById("chartContainer").style.display = "none";
+});
 
 </script>
 

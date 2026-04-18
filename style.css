@@ -92,11 +92,20 @@ button:hover {
 }
 
 /* Chart */
+#chartContainer {
+    height: 300px;
+    width: 100%;
+    position: relative;
+}
+
 .chart-card {
     background: rgba(255,255,255,0.05);
     padding: 20px;
     border-radius: 14px;
-    height: 300px;
+    height: auto;
     max-width: 700px;
+    margin: auto;
+}
+
     margin: auto;
 }
