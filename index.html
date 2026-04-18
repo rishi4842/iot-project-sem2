@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>IoT Compression Dashboard</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Smart IoT Dashboard</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -14,11 +14,10 @@
     <p class="subtitle">AI-powered sensor data compression</p>
 
     <div class="input-box">
-        <input id="inputData" placeholder="Enter data (10,20,30)">
+        <input id="inputData" placeholder="10,20,30">
         <button onclick="compressData()">Compress</button>
     </div>
 
-    <!-- STATS -->
     <div class="stats">
         <div class="card">
             <h3>Original Avg</h3>
@@ -31,7 +30,6 @@
         </div>
     </div>
 
-    <!-- GRAPH CARD -->
     <div class="chart-card">
         <h3>📊 Compression Visualization</h3>
         <canvas id="chart"></canvas>
@@ -40,14 +38,14 @@
 </div>
 
 <script>
+
 let chart;
 
 function compressData() {
+
     let input = document.getElementById("inputData").value;
+    let values = input.split(',').map(Number);
 
-    if (!input) return alert("Enter data");
-
-    let values = input.split(",").map(Number);
     let compressed = values.map(v => v * 0.5);
 
     let avgOriginal = values.reduce((a,b)=>a+b,0)/values.length;
@@ -56,35 +54,33 @@ function compressData() {
     document.getElementById("originalAvg").innerText = avgOriginal.toFixed(2);
     document.getElementById("compressedAvg").innerText = avgCompressed.toFixed(2);
 
-    drawChart(values, compressed);
-}
+    if(chart) chart.destroy();
 
-function drawChart(original, compressed) {
-    const ctx = document.getElementById('chart');
-
-    if (chart) chart.destroy();
-
-    chart = new Chart(ctx, {
+    chart = new Chart(document.getElementById("chart"), {
         type: 'line',
         data: {
-            labels: original.map((_, i) => i+1),
+            labels: values.map((_, i) => i+1),
             datasets: [
                 {
-                    label: 'Original',
-                    data: original,
-                    borderColor: '#00c6ff',
-                    tension: 0.4
+                    label: "Original",
+                    data: values,
+                    borderColor: "#22c55e"
                 },
                 {
-                    label: 'Compressed',
+                    label: "Compressed",
                     data: compressed,
-                    borderColor: '#ff4d6d',
-                    tension: 0.4
+                    borderColor: "#ef4444"
                 }
             ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
         }
     });
+
 }
+
 </script>
 
 </body>
