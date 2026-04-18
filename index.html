@@ -14,22 +14,26 @@
     <p class="subtitle">AI-powered sensor data compression</p>
 
     <div class="input-box">
-        <input id="input" placeholder="Enter values (10,20,30)">
+        <input id="inputData" placeholder="Enter data (10,20,30)">
         <button onclick="compressData()">Compress</button>
     </div>
 
+    <!-- STATS -->
     <div class="stats">
         <div class="card">
             <h3>Original Avg</h3>
-            <p id="avgOriginal">-</p>
+            <p id="originalAvg">--</p>
         </div>
+
         <div class="card">
             <h3>Compressed Avg</h3>
-            <p id="avgCompressed">-</p>
+            <p id="compressedAvg">--</p>
         </div>
     </div>
 
-    <div class="chart-box">
+    <!-- GRAPH CARD -->
+    <div class="chart-card">
+        <h3>📊 Compression Visualization</h3>
         <canvas id="chart"></canvas>
     </div>
 
@@ -39,18 +43,18 @@
 let chart;
 
 function compressData() {
-    let input = document.getElementById("input").value;
+    let input = document.getElementById("inputData").value;
 
     if (!input) return alert("Enter data");
 
     let values = input.split(",").map(Number);
     let compressed = values.map(v => v * 0.5);
 
-    document.getElementById("avgOriginal").innerText =
-        (values.reduce((a,b)=>a+b)/values.length).toFixed(2);
+    let avgOriginal = values.reduce((a,b)=>a+b,0)/values.length;
+    let avgCompressed = compressed.reduce((a,b)=>a+b,0)/compressed.length;
 
-    document.getElementById("avgCompressed").innerText =
-        (compressed.reduce((a,b)=>a+b)/compressed.length).toFixed(2);
+    document.getElementById("originalAvg").innerText = avgOriginal.toFixed(2);
+    document.getElementById("compressedAvg").innerText = avgCompressed.toFixed(2);
 
     drawChart(values, compressed);
 }
