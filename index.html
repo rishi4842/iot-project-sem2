@@ -1,27 +1,38 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Smart IoT Dashboard</title>
+    <title>IoT Compression Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<h1>🚀 Smart IoT Compression Dashboard</h1>
+<div class="container">
 
-<div class="card">
-    <input id="input" placeholder="Enter sensor data (e.g. 10,20,30)">
-    <button onclick="compressData()">Compress</button>
-</div>
+    <h1>🚀 Smart IoT Dashboard</h1>
+    <p class="subtitle">AI-powered sensor data compression</p>
 
-<div class="card">
-    <h3>📊 Results</h3>
-    <p id="result">No data yet</p>
-</div>
+    <div class="input-box">
+        <input id="input" placeholder="Enter values (10,20,30)">
+        <button onclick="compressData()">Compress</button>
+    </div>
 
-<div class="card">
-    <canvas id="chart"></canvas>
+    <div class="stats">
+        <div class="card">
+            <h3>Original Avg</h3>
+            <p id="avgOriginal">-</p>
+        </div>
+        <div class="card">
+            <h3>Compressed Avg</h3>
+            <p id="avgCompressed">-</p>
+        </div>
+    </div>
+
+    <div class="chart-box">
+        <canvas id="chart"></canvas>
+    </div>
+
 </div>
 
 <script>
@@ -30,18 +41,16 @@ let chart;
 function compressData() {
     let input = document.getElementById("input").value;
 
-    if (!input) {
-        alert("Enter data first");
-        return;
-    }
+    if (!input) return alert("Enter data");
 
     let values = input.split(",").map(Number);
+    let compressed = values.map(v => v * 0.5);
 
-    // Fake ML compression
-    let compressed = values.map(v => (v * 0.5).toFixed(2));
+    document.getElementById("avgOriginal").innerText =
+        (values.reduce((a,b)=>a+b)/values.length).toFixed(2);
 
-    document.getElementById("result").innerText =
-        "Compressed: " + compressed.join(", ");
+    document.getElementById("avgCompressed").innerText =
+        (compressed.reduce((a,b)=>a+b)/compressed.length).toFixed(2);
 
     drawChart(values, compressed);
 }
@@ -54,17 +63,19 @@ function drawChart(original, compressed) {
     chart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: original.map((_, i) => "Data " + (i+1)),
+            labels: original.map((_, i) => i+1),
             datasets: [
                 {
                     label: 'Original',
                     data: original,
-                    borderWidth: 2
+                    borderColor: '#00c6ff',
+                    tension: 0.4
                 },
                 {
                     label: 'Compressed',
                     data: compressed,
-                    borderWidth: 2
+                    borderColor: '#ff4d6d',
+                    tension: 0.4
                 }
             ]
         }
